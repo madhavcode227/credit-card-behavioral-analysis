@@ -27,4 +27,6 @@ Synthetic dataset: 2,000 customers, ~74,000 transactions across 24 months, with 
 Spend is highly concentrated: top cities account for the majority of total transaction volume, and platinum cardholders — despite being the smallest segment — contribute disproportionately to total spend.
 
 ## Author
-Som Singh
+Madhav Kapoor
+
+
