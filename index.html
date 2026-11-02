@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Credit Card Behavioral & Trend Pattern Analysis</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #F3F1EC;
+    --ink: #1B2130;
+    --ink-soft: #565F70;
+    --line: #D9D3C4;
+    --navy: #24406B;
+    --navy-soft: #E4E9F1;
+    --gold: #A87F2E;
+    --gold-soft: #F3EAD6;
+    --card: #FFFFFF;
+    --c1: #24406B; --c2: #3F6B9C; --c3: #6C93BF; --c4: #A87F2E;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--paper); color: var(--ink); font-family: 'Inter', sans-serif; line-height: 1.5; }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 56px 32px 100px; }
+  header.hero { border-bottom: 1px solid var(--line); padding-bottom: 40px; margin-bottom: 48px; }
+  .eyebrow { font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--navy); font-weight: 600; margin-bottom: 14px; }
+  h1 { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: clamp(28px, 4vw, 42px); letter-spacing: -0.01em; max-width: 900px; }
+  h1 em { font-style: normal; color: var(--gold); }
+  .hero-sub { margin-top: 16px; font-size: 16px; color: var(--ink-soft); max-width: 640px; }
+  .hero-meta { margin-top: 28px; display: flex; gap: 32px; flex-wrap: wrap; }
+  .meta-item { font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: var(--ink-soft); }
+  .meta-item b { color: var(--ink); font-weight: 600; }
+  .section { margin-bottom: 64px; }
+  .section-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 6px; }
+  .section-num { font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: var(--navy); font-weight: 600; }
+  .section-title { font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 600; }
+  .section-desc { color: var(--ink-soft); font-size: 14.5px; max-width: 640px; margin-bottom: 26px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 28px; }
+  .grid-2 { display: grid; grid-template-columns: 1.3fr 1fr; gap: 24px; }
+  @media (max-width: 860px) { .grid-2 { grid-template-columns: 1fr; } }
+  .kpi-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; margin-bottom: 56px; }
+  @media (max-width: 760px) { .kpi-strip { grid-template-columns: repeat(2, 1fr); } }
+  .kpi { background: var(--card); padding: 22px 20px; }
+  .kpi-label { font-family: 'IBM Plex Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-soft); margin-bottom: 10px; }
+  .kpi-value { font-family: 'Space Grotesk', sans-serif; font-size: 26px; font-weight: 700; }
+  .kpi-value.navy { color: var(--navy); }
+  .kpi-value.gold { color: var(--gold); }
+  .kpi-sub { font-size: 12.5px; color: var(--ink-soft); margin-top: 4px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { text-align: left; font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-soft); font-weight: 600; padding: 0 8px 10px; border-bottom: 1px solid var(--line); }
+  td { padding: 10px 8px; border-bottom: 1px solid var(--line); font-family: 'IBM Plex Mono', monospace; }
+  tr:last-child td { border-bottom: none; }
+  .rank-tag { display: flex; align-items: center; gap: 8px; font-family: 'Inter', sans-serif; font-weight: 500; }
+  .rank-num { font-family: 'IBM Plex Mono', monospace; color: var(--ink-soft); font-size: 11px; width: 16px; }
+  .callout { background: var(--navy-soft); border-left: 3px solid var(--navy); border-radius: 0 8px 8px 0; padding: 18px 22px; font-size: 14px; margin-top: 20px; }
+  .callout b { color: var(--navy); }
+  .callout.gold { background: var(--gold-soft); border-left-color: var(--gold); }
+  .callout.gold b { color: var(--gold); }
+  footer { border-top: 1px solid var(--line); padding-top: 28px; margin-top: 40px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--ink-soft); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <div class="eyebrow">Behavioral & Trend Pattern Analysis · SQL</div>
+    <h1>Spend is concentrated in <em>3 cities</em> and driven by a <em>small tier</em> of high-value cardholders.</h1>
+    <p class="hero-sub">SQL-driven analysis of credit card transaction data using CTEs and window functions to surface monthly spend movement, customer segmentation, and geographic concentration.</p>
+    <div class="hero-meta">
+      <div class="meta-item"><b>2,000</b> customers</div>
+      <div class="meta-item"><b>74,680</b> transactions</div>
+      <div class="meta-item"><b>24</b> months of data</div>
+      <div class="meta-item"><b>10</b> cities tracked</div>
+    </div>
+  </header>
+
+  <div class="kpi-strip">
+    <div class="kpi">
+      <div class="kpi-label">Top city spend</div>
+      <div class="kpi-value navy">₹34.5L</div>
+      <div class="kpi-sub">Mumbai — 23% of national volume</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">High spenders' share</div>
+      <div class="kpi-value gold">70%</div>
+      <div class="kpi-sub">Top 25% of customers, of total spend</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Platinum vs basic</div>
+      <div class="kpi-value">3.2×</div>
+      <div class="kpi-sub">Avg transaction size gap</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Total spend tracked</div>
+      <div class="kpi-value">₹1.45Cr</div>
+      <div class="kpi-sub">Running total, 24 months</div>
+    </div>
+  </div>
+
+  <section class="section">
+    <div class="section-head"><span class="section-num">01</span><span class="section-title">Monthly spend movement</span></div>
+    <p class="section-desc">Total monthly spend with month-over-month growth, calculated using <code>LAG()</code> and a running total via a window function.</p>
+    <div class="card"><canvas id="trendChart" height="260"></canvas></div>
+    <div class="callout">
+      <b>Sharp ramp, then plateau:</b> spend grew rapidly through mid-2024 (customer base still onboarding), then stabilized around ₹680-750K/month from late 2024 onward — a maturing, steady-state pattern.
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><span class="section-num">02</span><span class="section-title">Customer segmentation by spend</span></div>
+    <p class="section-desc">Customers split into quartiles using <code>NTILE(4)</code> on total spend.</p>
+    <div class="grid-2">
+      <div class="card"><canvas id="segChart" height="270"></canvas></div>
+      <div class="card">
+        <table>
+          <thead><tr><th>Segment</th><th>Customers</th><th>Avg Spend</th><th>Total Spend</th></tr></thead>
+          <tbody id="segTable"></tbody>
+        </table>
+        <div class="callout gold">
+          <b>High Spenders (top 25%) contribute ~70%</b> of total tracked spend — average ₹20,290 per customer vs just ₹1,040 for Low Spenders, a 19.5× gap.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><span class="section-num">03</span><span class="section-title">Geographic hotspots</span></div>
+    <p class="section-desc">Cities ranked by total transaction spend using <code>RANK()</code>.</p>
+    <div class="grid-2">
+      <div class="card"><canvas id="geoChart" height="290"></canvas></div>
+      <div class="card">
+        <table>
+          <thead><tr><th></th><th>City</th><th>Txns</th><th>Total Spend</th></tr></thead>
+          <tbody id="geoTable"></tbody>
+        </table>
+        <div class="callout">
+          <b>Top 3 cities (Mumbai, Delhi, Bengaluru)</b> account for ~58% of total transaction volume — a natural focus area for regional risk models or targeted offers.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span>Credit Card Behavioral & Trend Pattern Analysis — SQLite · SQL window functions</span>
+    <span>CTEs · LAG · NTILE · RANK · SUM() OVER PARTITION BY</span>
+  </footer>
+</div>
+
+<script>
+const trend = [
+["2024-01",49015.56],["2024-02",133026.48],["2024-03",235019.96],["2024-04",354768.18],
+["2024-05",458040.1],["2024-06",641505.54],["2024-07",715148.41],["2024-08",668721.88],
+["2024-09",724446.82],["2024-10",679711.74],["2024-11",728255.34],["2024-12",697976.32],
+["2025-01",710815.61],["2025-02",636536.91],["2025-03",724886.74],["2025-04",706730.51],
+["2025-05",689899.11],["2025-06",691373.71],["2025-07",711695.57],["2025-08",731897.7],
+["2025-09",748751.24],["2025-10",684147.03],["2025-11",686513.45],["2025-12",737128.02]
+];
+
+new Chart(document.getElementById('trendChart'), {
+  type: 'line',
+  data: { labels: trend.map(d=>d[0]), datasets: [{
+    data: trend.map(d=>d[1]), borderColor:'#24406B', backgroundColor:'rgba(36,64,107,0.08)',
+    fill:true, tension:0.3, pointRadius:2, borderWidth:2.2
+  }]},
+  options: { plugins:{legend:{display:false}, tooltip:{callbacks:{label:c=>'₹'+c.raw.toLocaleString()}}},
+    scales:{ y:{grid:{color:'#EAE6DB'}, ticks:{callback:v=>'₹'+(v/1000)+'K', font:{family:'IBM Plex Mono', size:10}}},
+             x:{grid:{display:false}, ticks:{font:{family:'IBM Plex Mono', size:9}, maxRotation:90}}}}
+});
+
+const seg = [
+["High Spender",500,20289.72,10144859.4],
+["Mid-High Spender",500,5257.33,2628662.73],
+["Mid-Low Spender",500,2504.91,1252453.34],
+["Low Spender",500,1040.07,520036.46]
+];
+new Chart(document.getElementById('segChart'), {
+  type:'doughnut',
+  data:{ labels: seg.map(d=>d[0]), datasets:[{ data: seg.map(d=>d[3]), backgroundColor:['#24406B','#3F6B9C','#6C93BF','#A87F2E'], borderWidth:3, borderColor:'#fff' }]},
+  options:{ plugins:{legend:{position:'bottom', labels:{font:{family:'Inter',size:12}, boxWidth:10, padding:14}}}, cutout:'58%'}
+});
+document.getElementById('segTable').innerHTML = seg.map(d=>`
+  <tr><td>${d[0]}</td><td>${d[1]}</td><td>₹${d[2].toLocaleString()}</td><td>₹${(d[3]/100000).toFixed(1)}L</td></tr>`).join('');
+
+const geo = [
+["Mumbai","Maharashtra",17375,3451247.22],["Delhi","Delhi",15157,2970276.68],
+["Bengaluru","Karnataka",10476,2021567.77],["Pune","Maharashtra",6835,1287560.85],
+["Hyderabad","Telangana",6555,1241559.72],["Chennai","Tamil Nadu",5946,1143818.62],
+["Kolkata","West Bengal",4189,901600.29],["Ahmedabad","Gujarat",3480,634997.59],
+["Chandigarh","Punjab",2284,462325.8],["Jaipur","Rajasthan",2383,431057.39]
+];
+new Chart(document.getElementById('geoChart'), {
+  type:'bar',
+  data:{ labels: geo.map(d=>d[0]), datasets:[{ data: geo.map(d=>d[3]), backgroundColor:'#24406B', borderRadius:5, barThickness:16 }]},
+  options:{ indexAxis:'y', plugins:{legend:{display:false}, tooltip:{callbacks:{label:c=>'₹'+c.raw.toLocaleString()}}},
+    scales:{ x:{grid:{color:'#EAE6DB'}, ticks:{font:{family:'IBM Plex Mono',size:10}, callback:v=>'₹'+(v/100000).toFixed(1)+'L'}},
+             y:{grid:{display:false}, ticks:{font:{family:'Inter',size:12}}}}}
+});
+document.getElementById('geoTable').innerHTML = geo.map((d,i)=>`
+  <tr><td><span class="rank-num">#${i+1}</span></td><td>${d[0]}</td><td>${d[2].toLocaleString()}</td><td>₹${(d[3]/100000).toFixed(1)}L</td></tr>`).join('');
+</script>
+</body>
+</html>

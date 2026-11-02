@@ -1,0 +1,11 @@
+txn_city,txn_state,txn_count,total_spend,avg_txn_amount,spend_rank
+Mumbai,Maharashtra,17375,3451247.22,198.63,1
+Delhi,Delhi,15157,2970276.68,195.97,2
+Bengaluru,Karnataka,10476,2021567.77,192.97,3
+Pune,Maharashtra,6835,1287560.85,188.38,4
+Hyderabad,Telangana,6555,1241559.72,189.41,5
+Chennai,"Tamil Nadu",5946,1143818.62,192.37,6
+Kolkata,"West Bengal",4189,901600.29,215.23,7
+Ahmedabad,Gujarat,3480,634997.59,182.47,8
+Chandigarh,Punjab,2284,462325.8,202.42,9
+Jaipur,Rajasthan,2383,431057.39,180.89,10

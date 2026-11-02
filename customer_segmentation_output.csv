@@ -1,0 +1,5 @@
+segment,num_customers,avg_spend,total_segment_spend
+"High Spender",500,20289.72,10144859.4
+"Mid-High Spender",500,5257.33,2628662.73
+"Mid-Low Spender",500,2504.91,1252453.34
+"Low Spender",500,1040.07,520036.46
